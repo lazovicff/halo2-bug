@@ -178,14 +178,11 @@ mod test {
                 |mut region: Region<'_, F>| {
                     let a = region.assign_advice(|| "temp", config.a, 0, || self.a)?;
 
-                    let fix = region.assign_fixed(
-                        || "temp",
-                        config.fixed,
-                        0,
-                        || Value::known(F::from(1)),
-                    )?;
+                    let constant = Value::known(F::from(1));
+                    // Assign to fixed column
+                    region.assign_fixed(|| "temp", config.fixed, 0, || constant)?;
 
-                    let next = a.value().cloned() * fix.value().cloned();
+                    let next = a.value().cloned() * constant;
 
                     let res = region.assign_advice(|| "temp", config.a, 1, || next)?;
 
